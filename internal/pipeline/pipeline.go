@@ -18,6 +18,11 @@ import (
 // StateListener observes recording transitions for UI/tray glue.
 type StateListener func(recording bool)
 
+// ErrorListener observes user-visible errors from the running pipeline (e.g.
+// inject failures). Listeners are invoked synchronously, so they must not
+// block.
+type ErrorListener func(err error)
+
 // Pipeline is the top-level orchestrator. It is safe to call Toggle/Start/Stop
 // from any goroutine.
 type Pipeline struct {
@@ -34,6 +39,7 @@ type Pipeline struct {
 
 	listenersMu sync.Mutex
 	listeners   []StateListener
+	errListeners []ErrorListener
 }
 
 // New constructs a Pipeline. The whisper model and recorder must already be
@@ -47,6 +53,13 @@ func (p *Pipeline) OnState(fn StateListener) {
 	p.listenersMu.Lock()
 	defer p.listenersMu.Unlock()
 	p.listeners = append(p.listeners, fn)
+}
+
+// OnError registers a listener for non-fatal user-visible errors.
+func (p *Pipeline) OnError(fn ErrorListener) {
+	p.listenersMu.Lock()
+	defer p.listenersMu.Unlock()
+	p.errListeners = append(p.errListeners, fn)
 }
 
 // Recording reports whether the pipeline is currently capturing audio.
@@ -176,6 +189,7 @@ func (p *Pipeline) handleUtterance(samples []int16) {
 	if prefix != "" {
 		if err := p.injector.Type(prefix + " "); err != nil {
 			log.Printf("inject: %v", err)
+			p.notifyErr(err)
 		}
 	}
 	if magicHit {
@@ -189,6 +203,15 @@ func (p *Pipeline) notify(recording bool) {
 	p.listenersMu.Unlock()
 	for _, fn := range listeners {
 		fn(recording)
+	}
+}
+
+func (p *Pipeline) notifyErr(err error) {
+	p.listenersMu.Lock()
+	listeners := append([]ErrorListener(nil), p.errListeners...)
+	p.listenersMu.Unlock()
+	for _, fn := range listeners {
+		fn(err)
 	}
 }
 

@@ -9,6 +9,7 @@
     PromptAccessibility,
     OpenAccessibilityPrefs,
     OpenMicrophonePrefs,
+    ResetAccessibility,
     GetLaunchAtLogin,
     SetLaunchAtLogin,
     ListModels,
@@ -205,6 +206,15 @@
     if (!p.total) return 0;
     return Math.min(100, Math.round((p.downloaded / p.total) * 100));
   }
+
+  async function resetAxAccess() {
+    errorMsg = "";
+    try {
+      await ResetAccessibility();
+    } catch (err: unknown) {
+      errorMsg = String(err);
+    }
+  }
 </script>
 
 <svelte:window on:keydown|capture={onCaptureKeydown} />
@@ -263,13 +273,24 @@
     <span>
       <span class="dot {perms.accessibility ? 'good' : 'bad'}"></span>
       <span class="label">Accessibility</span>
-      <div class="meta">global § hotkey + synthetic Cmd+V</div>
+      <div class="meta">
+        global § hotkey + synthetic Cmd+V.
+        {#if !perms.accessibility}
+          <br/>
+          if Genie is already toggled on in System Settings but this still says
+          off, click <strong>Reset access</strong> — that's a stale TCC entry
+          from a previous build.
+        {/if}
+      </div>
     </span>
-    {#if perms.accessibility}
-      <span class="dim">granted</span>
-    {:else}
-      <button on:click={() => { PromptAccessibility(); OpenAccessibilityPrefs(); }}>Grant</button>
-    {/if}
+    <span style="display: flex; gap: 6px; flex-shrink: 0;">
+      {#if perms.accessibility}
+        <span class="dim">granted</span>
+      {:else}
+        <button on:click={() => { PromptAccessibility(); OpenAccessibilityPrefs(); }}>Grant</button>
+      {/if}
+      <button on:click={resetAxAccess}>Reset access</button>
+    </span>
   </div>
 
   <h2>Model</h2>

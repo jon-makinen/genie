@@ -119,6 +119,9 @@ func (a *App) tryLoadWhisper() error {
 	a.whisper = w
 	a.pipeline = pipeline.New(a.store, w, inject.New(), a.recorder)
 	a.pipeline.OnState(a.onPipelineState)
+	a.pipeline.OnError(func(err error) {
+		runtime.EventsEmit(a.ctx, "error", err.Error())
+	})
 	return nil
 }
 
@@ -268,6 +271,18 @@ func (a *App) PromptAccessibility() { permissions.PromptAccessibility() }
 
 // OpenAccessibilityPrefs jumps to System Settings > Privacy > Accessibility.
 func (a *App) OpenAccessibilityPrefs() { permissions.OpenAccessibilityPrefs() }
+
+// ResetAccessibility clears Genie's TCC accessibility entry and re-prompts.
+// Used to recover from "checked in Settings but AXIsProcessTrusted returns
+// false" after a rebuild changed the binary's cdhash. The settings UI surfaces
+// any tccutil error so the user can see why nothing happened.
+func (a *App) ResetAccessibility() error {
+	if err := permissions.ResetAccessibility(); err != nil {
+		runtime.EventsEmit(a.ctx, "error", err.Error())
+		return err
+	}
+	return nil
+}
 
 // OpenMicrophonePrefs jumps to System Settings > Privacy > Microphone.
 func (a *App) OpenMicrophonePrefs() { permissions.OpenMicrophonePrefs() }

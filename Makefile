@@ -42,6 +42,13 @@ GGML_INCLUDE := $(abspath $(WHISPER_SRC)/ggml/include)
 
 whisper: $(WHISPER_SRC)
 	@ln -sfn "$(WORKSPACE)" "$(BUILD_LINK)"
+	@# CMakeCache.txt remembers the source path it was generated from. If a
+	@# previous build used a different /tmp symlink (different shell, different
+	@# workspace move), cmake refuses to reuse the cache. Wipe it and start fresh.
+	@if [ -f "$(WHISPER_BUILD)/CMakeCache.txt" ] && ! grep -q "^CMAKE_HOME_DIRECTORY:INTERNAL=$(BUILD_LINK)/$(WHISPER_SRC)$$" "$(WHISPER_BUILD)/CMakeCache.txt"; then \
+		echo "stale whisper build cache (different source path); cleaning"; \
+		rm -rf "$(WHISPER_BUILD)"; \
+	fi
 	@cd "$(BUILD_LINK)" && cmake -S "$(WHISPER_SRC)" -B "$(WHISPER_BUILD)" \
 		-DCMAKE_BUILD_TYPE=Release \
 		-DBUILD_SHARED_LIBS=OFF \

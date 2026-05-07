@@ -14,6 +14,13 @@ package inject
 #import <ApplicationServices/ApplicationServices.h>
 #import <Carbon/Carbon.h>
 
+// genie_ax_trusted reports whether the current process has Accessibility
+// permission. CGEventPost silently no-ops without it, so we check up front
+// to surface a real error instead of pasting nothing.
+static int genie_ax_trusted(void) {
+    return AXIsProcessTrusted() ? 1 : 0;
+}
+
 // genie_save_clipboard returns the current clipboard string content (or "").
 // Caller must free() the returned char*.
 static const char* genie_save_clipboard(void) {
@@ -52,10 +59,16 @@ static void genie_paste(void) {
 import "C"
 
 import (
+	"errors"
 	"sync"
 	"time"
 	"unsafe"
 )
+
+// ErrNotTrusted is returned when Cmd+V can't be synthesized because the
+// process lacks Accessibility permission. Recoverable from the Settings UI
+// via the "Reset access" button.
+var ErrNotTrusted = errors.New("Accessibility permission missing — Cmd+V can't be synthesized. Open Settings → Permissions → Reset access.")
 
 type macInjector struct {
 	mu sync.Mutex
@@ -73,6 +86,9 @@ func New() Injector { return &macInjector{} }
 func (m *macInjector) Type(text string) error {
 	if text == "" {
 		return nil
+	}
+	if C.genie_ax_trusted() == 0 {
+		return ErrNotTrusted
 	}
 	m.mu.Lock()
 
