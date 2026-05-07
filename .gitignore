@@ -1,0 +1,9 @@
+build/bin/
+frontend/dist/
+frontend/node_modules/
+frontend/wailsjs/
+models/*.bin
+models/*.gguf
+third_party/whisper.cpp/
+.DS_Store
+*.log

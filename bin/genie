@@ -1,0 +1,16 @@
+#!/bin/sh
+# genie — launch (or focus) the Genie dictation app.
+#
+# Override the app location with: GENIE_APP=/path/to/Genie.app genie
+
+set -e
+
+APP="${GENIE_APP:-/Applications/Genie.app}"
+
+if [ ! -d "$APP" ]; then
+    echo "genie: $APP not found." >&2
+    echo "Install it with 'make install' from the genie repo, or set GENIE_APP to its location." >&2
+    exit 1
+fi
+
+exec open "$APP"

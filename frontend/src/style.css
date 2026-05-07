@@ -1,0 +1,318 @@
+:root {
+  color-scheme: dark;
+  --bg: #000000;
+  --bg-elev: #0a0a0a;
+  --border: #2a2a2a;
+  --border-strong: #404040;
+  --text: #f5f5f5;
+  --text-muted: #888888;
+  --text-dim: #555555;
+  --accent: #ffffff;
+  --danger: #ff5555;
+  --good: #66ff99;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "SF Mono", "JetBrains Mono", "IBM Plex Mono", "Menlo", "Consolas", ui-monospace, monospace;
+  font-size: 12px;
+  line-height: 1.55;
+  letter-spacing: 0.01em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#app {
+  min-height: 100vh;
+  padding: 36px 32px 32px;
+}
+
+main {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+h2 {
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--text-muted);
+  margin: 32px 0 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+h2::before {
+  content: "// ";
+  color: var(--text-dim);
+}
+
+p {
+  margin: 6px 0;
+  color: var(--text-muted);
+}
+
+p strong { color: var(--text); font-weight: 500; }
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 11px;
+  margin-top: 6px;
+  margin-bottom: 4px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  background: transparent;
+  border: 1px solid var(--border);
+  margin-bottom: 6px;
+}
+
+.row + .row {
+  border-top: none;
+  margin-top: -7px;
+}
+
+.row .label {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.row .meta {
+  color: var(--text-muted);
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+.row > span:first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+button {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+  border-radius: 0;
+  padding: 6px 14px;
+  font-family: inherit;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+
+button:hover:not(:disabled) {
+  background: var(--text);
+  color: var(--bg);
+}
+
+button.primary {
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
+}
+
+button.primary:hover:not(:disabled) {
+  background: var(--bg);
+  color: var(--text);
+}
+
+button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+input[type="text"], select {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+  border-radius: 0;
+  padding: 6px 10px;
+  font-family: inherit;
+  font-size: 12px;
+  width: 180px;
+  letter-spacing: 0.04em;
+}
+
+input[type="text"]:focus, select:focus {
+  outline: none;
+  border-color: var(--text);
+}
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--text) 50%),
+                    linear-gradient(135deg, var(--text) 50%, transparent 50%);
+  background-position: calc(100% - 14px) 50%, calc(100% - 9px) 50%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 26px;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle input { display: none; }
+
+.toggle .switch {
+  width: 36px;
+  height: 18px;
+  background: var(--bg);
+  border: 1px solid var(--border-strong);
+  position: relative;
+  transition: background 0.1s, border-color 0.1s;
+}
+
+.toggle .switch::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 12px;
+  height: 12px;
+  background: var(--text-muted);
+  transition: left 0.1s, background 0.1s;
+}
+
+.toggle input:checked + .switch { border-color: var(--text); }
+.toggle input:checked + .switch::after { left: 20px; background: var(--text); }
+
+.progress {
+  height: 4px;
+  background: var(--border);
+  margin-top: 8px;
+  position: relative;
+}
+
+.progress > div {
+  height: 100%;
+  background: var(--text);
+  transition: width 0.15s linear;
+}
+
+.dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 8px;
+  vertical-align: middle;
+  background: currentColor;
+}
+
+.dot.good { color: var(--good); }
+.dot.bad  { color: var(--danger); }
+
+.banner {
+  padding: 12px 16px;
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  margin-bottom: 16px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+
+.banner::before { content: "! "; opacity: 0.7; }
+
+.banner.ok {
+  border-color: var(--good);
+  color: var(--good);
+}
+
+.banner.ok::before { content: "> "; }
+
+.recording-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: var(--danger);
+  margin-right: 8px;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.25; }
+}
+
+.kbd {
+  display: inline-block;
+  padding: 1px 7px;
+  background: var(--bg);
+  border: 1px solid var(--border-strong);
+  font-family: inherit;
+  font-size: 11px;
+  margin: 0 2px;
+}
+
+.muted { color: var(--text-muted); }
+.dim   { color: var(--text-dim); }
+
+.actions {
+  margin-top: 32px;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.title-block {
+  margin-bottom: 4px;
+}
+
+.title-block .version {
+  color: var(--text-dim);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  margin-top: 4px;
+}
+
+.intro {
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--text-muted);
+  margin: 16px 0 28px;
+  padding: 14px 16px;
+  border: 1px dashed var(--border);
+}
+
+.intro strong { color: var(--text); font-weight: 500; }
+
+a { color: var(--text); }
+
+::selection {
+  background: var(--text);
+  color: var(--bg);
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border-strong); }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
