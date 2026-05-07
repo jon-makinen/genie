@@ -5,6 +5,12 @@ Local open source Whisper dictation as a macOS menu bar app in any input.
 <img width="549" height="710" alt="Screenshot 2026-05-07 at 19 05 43" src="https://github.com/user-attachments/assets/b2e5d873-bf1a-488e-bf62-22be77f71fd0" />
 
 
+
+https://github.com/user-attachments/assets/f51a986d-79af-4d4d-aca3-c540bee7afa4
+
+
+
+
 Press a global hotkey (default <kbd>§</kbd>, the key just left of <kbd>1</kbd> on Finnish/ISO Mac keyboards) or click the menu bar icon to start recording. Genie streams your speech through [whisper.cpp](https://github.com/ggerganov/whisper.cpp) (Metal-accelerated), and pastes the transcript into the focused input as you speak. Say a magic word (default `genie`) to stop.
 
 Everything runs locally. No audio leaves your machine.
